@@ -14,7 +14,53 @@
 </head>
 
 <body>
+    <!-- PORTFOLIO LETTER L LOCK SCREEN -->
+    <div id="lockScreen" class="lock-screen">
 
+        <div class="lock-content">
+
+            <p class="eyebrow">A LITTLE CHALLENGE BEFORE YOU ENTER</p>
+
+            <h1>Welcome to My <em>Portfolio</em></h1>
+
+            <p class="lock-description">
+                Before exploring my work, please trace the letter L
+                using your mouse or finger.
+            </p>
+
+            <div class="drawing-area">
+
+                <svg id="drawingCanvas" viewBox="0 0 100 100" preserveAspectRatio="none">
+
+                    <!-- Letter L guide -->
+                    <path class="letter-guide" d="M 35 20 V 75 H 70" />
+
+                    <!-- User's drawing -->
+                    <polyline id="userDrawing" class="user-drawing" points="" />
+
+                </svg>
+
+            </div>
+
+            <div class="progress-container">
+                <div id="drawingProgress"></div>
+            </div>
+
+            <p id="drawingMessage" class="drawing-message">
+                Start at the top and trace downward, then move right.
+            </p>
+
+            <button id="resetDrawing" class="reset-drawing">
+                Reset Drawing
+            </button>
+
+            <p class="lock-footer">
+                Made with care by Lean Margaret Dancel ♡
+            </p>
+
+        </div>
+
+    </div>
     <header class="header">
         <nav class="nav wrap" aria-label="Main navigation">
 
@@ -71,7 +117,8 @@
                         Explore My Work ↗
                     </a>
 
-                    <a href="./Lean_Margaret_Dancel_INTERNSHIP_Resume.pdf" class="btn outline" download="Lean_Margaret_Dancel_INTERNSHIP_Resume.pdf">
+                    <a href="./Lean_Margaret_Dancel_INTERNSHIP_Resume.pdf" class="btn outline"
+                        download="Lean_Margaret_Dancel_INTERNSHIP_Resume.pdf">
                         Download Resume
                     </a>
 

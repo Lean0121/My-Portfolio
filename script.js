@@ -205,3 +205,244 @@ document.addEventListener("DOMContentLoaded", function () {
     updateSlider();
 
 });
+
+/* ==========================================
+   4. LETTER L DRAWING VERIFICATION
+========================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const lockScreen = document.getElementById("lockScreen");
+    const drawingCanvas = document.getElementById("drawingCanvas");
+    const userDrawing = document.getElementById("userDrawing");
+
+    const progressBar = document.getElementById("drawingProgress");
+    const message = document.getElementById("drawingMessage");
+    const resetButton = document.getElementById("resetDrawing");
+
+    if (
+        !lockScreen ||
+        !drawingCanvas ||
+        !userDrawing ||
+        !progressBar ||
+        !message ||
+        !resetButton
+    ) {
+        return;
+    }
+
+    let drawing = false;
+    let completed = false;
+
+    let stage = 0;
+
+    let lastY = 20;
+    let lastX = 35;
+
+    let points = [];
+
+    // Get pointer position relative to SVG
+    function getPosition(event) {
+
+        const rect = drawingCanvas.getBoundingClientRect();
+
+        return {
+            x: ((event.clientX - rect.left) / rect.width) * 100,
+            y: ((event.clientY - rect.top) / rect.height) * 100
+        };
+
+    }
+
+    // Update the drawing
+    function updateDrawing(x, y) {
+
+        points.push(x + "," + y);
+
+        userDrawing.setAttribute(
+            "points",
+            points.join(" ")
+        );
+
+    }
+
+    // Update progress
+    function updateProgress() {
+
+        let progress = 0;
+
+        if (stage === 0) {
+
+            progress = ((lastY - 20) / 55) * 100;
+
+        } else {
+
+            progress = (
+                55 + (lastX - 35)
+            ) / 90 * 100;
+
+        }
+
+        progressBar.style.width =
+            Math.min(progress, 100) + "%";
+
+    }
+
+    // Start tracing
+    drawingCanvas.addEventListener("pointerdown", function (event) {
+
+        if (completed) return;
+
+        const position = getPosition(event);
+
+        // First starting point
+        if (points.length === 0) {
+
+            const distance = Math.hypot(
+                position.x - 35,
+                position.y - 20
+            );
+
+            if (distance > 12) {
+
+                message.textContent =
+                    "Start at the top of the letter L.";
+
+                return;
+
+            }
+
+            updateDrawing(35, 20);
+
+        } else {
+
+            // Continue from the last position
+            const distance = Math.hypot(
+                position.x - lastX,
+                position.y - lastY
+            );
+
+            if (distance > 8) return;
+
+        }
+
+        drawing = true;
+
+        drawingCanvas.setPointerCapture(event.pointerId);
+
+    });
+
+    // Track drawing movement
+    drawingCanvas.addEventListener("pointermove", function (event) {
+
+        if (!drawing || completed) return;
+
+        const position = getPosition(event);
+
+        const x = position.x;
+        const y = position.y;
+
+        // Stage 0: Draw the vertical line
+        if (stage === 0) {
+
+            if (
+                Math.abs(x - 35) <= 9 &&
+                y >= lastY &&
+                y <= 78
+            ) {
+
+                lastX = 35;
+                lastY = y;
+
+                updateDrawing(lastX, lastY);
+
+                if (lastY >= 70) {
+
+                    stage = 1;
+
+                    message.textContent =
+                        "Great! Now trace the bottom line to the right.";
+
+                }
+
+                updateProgress();
+
+            }
+
+        }
+
+        // Stage 1: Draw the horizontal line
+        else if (stage === 1) {
+
+            if (
+                Math.abs(y - 75) <= 9 &&
+                x >= lastX &&
+                x <= 75
+            ) {
+
+                lastX = x;
+                lastY = 75;
+
+                updateDrawing(lastX, lastY);
+
+                updateProgress();
+
+                // Letter L successfully completed
+                if (lastX >= 70) {
+
+                    completed = true;
+
+                    progressBar.style.width = "100%";
+
+                    message.textContent =
+                        "Perfect! Welcome to my portfolio! ♡";
+
+                    setTimeout(function () {
+
+                        lockScreen.classList.add("unlocked");
+
+                    }, 700);
+
+                }
+
+            }
+
+        }
+
+    });
+
+    // Stop drawing temporarily
+    drawingCanvas.addEventListener("pointerup", function () {
+
+        drawing = false;
+
+    });
+
+    drawingCanvas.addEventListener("pointercancel", function () {
+
+        drawing = false;
+
+    });
+
+    // Reset drawing
+    resetButton.addEventListener("click", function () {
+
+        drawing = false;
+        completed = false;
+
+        stage = 0;
+
+        lastX = 35;
+        lastY = 20;
+
+        points = [];
+
+        userDrawing.setAttribute("points", "");
+
+        progressBar.style.width = "0%";
+
+        message.textContent =
+            "Start at the top and trace downward, then move right.";
+
+    });
+
+});
